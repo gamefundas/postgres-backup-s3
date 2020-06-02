@@ -3,16 +3,6 @@
 set -eu
 set -o pipefail
 
-if [ -z "$S3_ACCESS_KEY_ID" ]; then
-  echo "You need to set the S3_ACCESS_KEY_ID environment variable."
-  exit 1
-fi
-
-if [ -z "$S3_SECRET_ACCESS_KEY" ]; then
-  echo "You need to set the S3_SECRET_ACCESS_KEY environment variable."
-  exit 1
-fi
-
 if [ -z "$S3_BUCKET" ]; then
   echo "You need to set the S3_BUCKET environment variable."
   exit 1
@@ -49,9 +39,16 @@ else
   aws_args="--endpoint-url $S3_ENDPOINT"
 fi
 
+if [ -n "$S3_ACCESS_KEY_ID" ]; then
+  echo "Set the S3_ACCESS_KEY_ID environment variable."
+  export AWS_ACCESS_KEY_ID=$S3_ACCESS_KEY_ID
+fi
 
-export AWS_ACCESS_KEY_ID=$S3_ACCESS_KEY_ID
-export AWS_SECRET_ACCESS_KEY=$S3_SECRET_ACCESS_KEY
+if [ -n "$S3_SECRET_ACCESS_KEY" ]; then
+  echo "Set the S3_SECRET_ACCESS_KEY environment variable."
+  export AWS_SECRET_ACCESS_KEY=$S3_SECRET_ACCESS_KEY
+fi
+
 export AWS_DEFAULT_REGION=$S3_REGION
 export PGPASSWORD=$POSTGRES_PASSWORD
 
